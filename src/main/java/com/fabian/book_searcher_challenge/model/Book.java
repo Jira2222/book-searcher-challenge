@@ -22,6 +22,8 @@ public class Book {
 
     private Integer downloadCount;
 
+    public Book(){}
+
     public Book(BookData bookData) {
         this.title =bookData.title();
         this.language = bookData.language().stream()
