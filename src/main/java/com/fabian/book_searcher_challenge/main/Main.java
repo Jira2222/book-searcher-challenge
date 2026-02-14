@@ -52,11 +52,17 @@ public class Main {
                     1 - Search book by title
                     2 - Show all DB register books
                     3 - Show all DB register authors
+                    4 - Show DB register books by year authors alive
+                    5 - Show all DB register book by language
                     ********************************
                     """);
 
-            option = key.nextInt();
-            key.nextLine();
+            try {
+                option = key.nextInt();
+                key.nextLine();
+            }catch (NumberFormatException e){
+                System.out.println("No valid option!!");
+            }
 
             switch (option){
                 case 1:
@@ -67,6 +73,12 @@ public class Main {
                 break;
                 case 3:
                     showRegisterAuthors();
+                break;
+                case 4:
+                    ShowByYearAuthorsAlive();
+                break;
+                case 5:
+                    showByLanguage();
                 break;
 
                 case 0:
@@ -134,6 +146,44 @@ public class Main {
        List<Object[]> booksByAuthor = repository.findAuthorsGrouped();
 
        authorsTemplate(booksByAuthor);
+    }
+
+    private void ShowByYearAuthorsAlive() {
+        System.out.println("Input a year to search alive authors and their books:");
+        var year = key.nextInt();
+        key.nextLine();
+
+        List<Object[]> booksByAliveYearAuthor = repository.findByAliveYear(year);
+
+        if(booksByAliveYearAuthor.isEmpty()){
+            System.out.println("Books no found with alive authors in " + year + "!!!");
+        }else{
+            authorsTemplate(booksByAliveYearAuthor);
+        }
+
+    }
+
+    private void showByLanguage() {
+        System.out.println("""
+                Input language to find books (input the two first letter):
+                en - English
+                es - Spanish
+                fr - French
+                pt - Portuguese
+                de - German
+                """);
+        var lang = key.nextLine();
+
+        List<Book> booksByLanguage = repository.findByLanguage(lang);
+
+        if (booksByLanguage.isEmpty()){
+            System.out.println("Books no found with that language!");
+        }else{
+            booksByLanguage.forEach(b ->
+                    System.out.printf(booksStructure,
+                            b.getTitle(), b.getAuthor(), b.getLanguage(),b.getDownloadCount())
+            );
+        }
     }
 
     private void authorsTemplate(List<Object[]> authorBook){

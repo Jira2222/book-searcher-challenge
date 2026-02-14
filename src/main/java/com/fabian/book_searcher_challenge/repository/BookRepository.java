@@ -20,4 +20,18 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     GROUP BY author, birth_year, death_year
     """, nativeQuery = true)
     List<Object[]> findAuthorsGrouped();
+
+   @Query(value = """
+   SELECT
+       author,
+       birth_year,
+       death_year,
+       array_agg(title) AS titles
+   FROM books
+   WHERE :aliveYear >= books.birth_year AND :aliveYear <= books.death_year
+   GROUP BY author, birth_year, death_year
+   """, nativeQuery = true)
+   List<Object[]> findByAliveYear(int aliveYear);
+
+   List<Book> findByLanguage(String languageBook);
 }
